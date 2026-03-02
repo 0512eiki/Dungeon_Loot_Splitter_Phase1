@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dungeon Loot Splitter app to collect loot and split value among party members.">
+  <meta name="author" content="Eiki Furuya">
+  <title>Dungeon Loot Splitter</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top-row">
+    <h1>Dungeon Loot Splitter</h1>
+  </header>
+
+  <main>
+    <section class="panel" aria-labelledby="party-setup-heading">
+      <h2 id="party-setup-heading">Party Setup</h2>
+      <label for="partySize">Number of Party Members:</label>
+      <input id="partySize" type="number" min="1" step="1" required>
+      <p id="partyMessage" class="message" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="add-loot-heading">
+      <h2 id="add-loot-heading">Add Loot</h2>
+      <label for="lootName">Loot Name:</label>
+      <input id="lootName" type="text" required>
+
+      <label for="lootValue">Loot Value:</label>
+      <input id="lootValue" type="number" min="0" step="0.01" required>
+
+      <button id="addLootBtn" type="button">Add Loot</button>
+      <p id="addLootMessage" class="message" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="loot-list-heading">
+      <h2 id="loot-list-heading">Loot List</h2>
+      <ul id="lootList"></ul>
+      <p id="emptyLootMessage" class="message">No loot entered yet.</p>
+      <p class="result-line"><strong>Total Loot</strong>: $<span id="runningTotal">0.00</span></p>
+    </section>
+
+    <section class="panel" aria-labelledby="split-loot-heading">
+      <h2 id="split-loot-heading">Split Loot</h2>
+      <button id="splitLootBtn" type="button">Split Loot</button>
+      <p id="splitMessage" class="message" aria-live="polite"></p>
+      <div class="results" aria-live="polite">
+        <p class="result-line"><strong>Total Loot</strong>: $<span id="finalTotal">0.00</span></p>
+        <p class="result-line"><strong>Loot Per Party Member</strong>: $<span id="perMember">0.00</span></p>
+      </div>
+    </section>
+
+    <section class="panel reflection" aria-labelledby="logic-explanation-heading">
+      <h2 id="logic-explanation-heading">Logic Explanation</h2>
+      <p>
+        I use one array to store loot entries. Each entry is an object with two properties: name and value.
+        A traditional for loop is used to calculate total loot and another loop is used to render each item
+        into the visible list. Conditional logic with if statements validates party size, loot name, and loot value,
+        and also handles edge cases like trying to split before any loot is added.
+      </p>
+    </section>
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
