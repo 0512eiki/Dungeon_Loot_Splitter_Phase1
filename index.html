@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Dungeon Loot Splitter app to collect loot and split value among party members.">
   <meta name="author" content="Eiki Furuya">
+  <meta name="keywords" content="dungeon loot splitter, loot tracker, party split, RPG tools">
+  <meta name="robots" content="index, follow">
   <title>Dungeon Loot Splitter</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -16,18 +18,31 @@
   <main>
     <section class="panel" aria-labelledby="party-setup-heading">
       <h2 id="party-setup-heading">Party Setup</h2>
-      <label for="partySize">Number of Party Members:</label>
-      <input id="partySize" type="number" min="1" step="1" required>
+      <div class="field-group">
+        <label for="partySize">Number of Party Members:</label>
+        <input id="partySize" type="number" min="1" step="1" required>
+      </div>
       <p id="partyMessage" class="message" aria-live="polite"></p>
     </section>
 
     <section class="panel" aria-labelledby="add-loot-heading">
       <h2 id="add-loot-heading">Add Loot</h2>
-      <label for="lootName">Loot Name:</label>
-      <input id="lootName" type="text" required>
+      <div class="field-stack">
+        <div class="field-group">
+          <label for="lootName">Loot Name:</label>
+          <input id="lootName" type="text" required>
+        </div>
 
-      <label for="lootValue">Loot Value:</label>
-      <input id="lootValue" type="number" min="0" step="0.01" required>
+        <div class="field-group">
+          <label for="lootValue">Loot Value:</label>
+          <input id="lootValue" type="number" min="0" step="0.01" required>
+        </div>
+
+        <div class="field-group">
+          <label for="lootQuantity">Quantity:</label>
+          <input id="lootQuantity" type="number" min="1" step="1" required>
+        </div>
+      </div>
 
       <button id="addLootBtn" type="button">Add Loot</button>
       <p id="addLootMessage" class="message" aria-live="polite"></p>
@@ -35,16 +50,28 @@
 
     <section class="panel" aria-labelledby="loot-list-heading">
       <h2 id="loot-list-heading">Loot List</h2>
-      <ul id="lootList"></ul>
-      <p id="emptyLootMessage" class="message">No loot entered yet.</p>
-      <p class="result-line"><strong>Total Loot</strong>: $<span id="runningTotal">0.00</span></p>
+
+      <div id="noLootMessage" class="message">No loot added.</div>
+
+      <div class="loot-table" aria-live="polite">
+        <div class="loot-header">Name</div>
+        <div class="loot-header">Value</div>
+        <div class="loot-header">Quantity</div>
+        <div class="loot-header">Remove</div>
+
+        <div id="lootRows"></div>
+      </div>
+
+      <div id="lootTotalsRow" class="total-row">
+        Total Loot: $<span id="totalLoot">0.00</span>
+      </div>
     </section>
 
-    <section class="panel" aria-labelledby="split-loot-heading">
+    <section class="panel split-panel" aria-labelledby="split-loot-heading">
       <h2 id="split-loot-heading">Split Loot</h2>
       <button id="splitLootBtn" type="button">Split Loot</button>
       <p id="splitMessage" class="message" aria-live="polite"></p>
-      <div class="results" aria-live="polite">
+      <div id="splitResults" class="results hidden" aria-live="polite">
         <p class="result-line"><strong>Total Loot</strong>: $<span id="finalTotal">0.00</span></p>
         <p class="result-line"><strong>Loot Per Party Member</strong>: $<span id="perMember">0.00</span></p>
       </div>
@@ -53,11 +80,18 @@
     <section class="panel reflection" aria-labelledby="logic-explanation-heading">
       <h2 id="logic-explanation-heading">Logic Explanation</h2>
       <p>
-        I use one array to store loot entries. Each entry is an object with two properties: name and value.
-        A traditional for loop is used to calculate total loot and another loop is used to render each item
-        into the visible list. Conditional logic with if statements validates party size, loot name, and loot value,
-        and also handles edge cases like trying to split before any loot is added.
+        The loot array is the single source of truth, so the screen always reflects what the array and party size
+        currently contain. I added a quantity property to each loot object so the total value uses value × quantity
+        rather than just value alone. All calculations and all rendering happen inside `updateUI()`, which keeps
+        the system consistent and prevents duplicate logic. The interface is controlled by state: when data is
+        invalid or missing, results are hidden and the Split button is disabled; when state becomes valid, those
+        UI elements appear and become enabled. Conditional logic in `updateUI()` prevents invalid state from
+        affecting the display and keeps totals from showing when data is incomplete.
       </p>
+      <figure class="logic-figure">
+        <img src="images/logic-flow-sketch.jpg" alt="Logic flow sketch showing action, state change, updateUI, and interface update">
+        <figcaption>Logic flow sketch: user action → state change → updateUI() → interface update.</figcaption>
+      </figure>
     </section>
   </main>
 
